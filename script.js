@@ -200,7 +200,7 @@ function renderTable(data, containerId, headersMap, uniqueByKey = null, tableCla
             if (tableClass === 'debtors-table' && (h.key === '№ п/п' || h.key === 'Фамилия должника')) {
                 if (rowData.rowspan && rowData.rowspan > 1) { // Убеждаемся, что rowspan > 1
                     cell.rowSpan = rowData.rowspan;
-                    cell.style.verticalAlign = 'top'; // Выравниваем текст по верхнему краю в объединенной ячейке
+                    //cell.style.verticalAlign = 'top'; // Выравниваем текст по верхнему краю в объединенной ячейке
                 }
             }
         });
