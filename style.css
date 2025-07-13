@@ -15,18 +15,24 @@ h1, h2 {
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     margin-bottom: 20px;
+    /* Разрешает горизонтальную прокрутку, если содержимое слишком широкое */
+    overflow-x: auto;
 }
 
+/* Стили для всех таблиц по умолчанию */
 table {
-    width: 100%;
+    width: 100%; /* Таблица занимает 100% ширины родительского контейнера */
     border-collapse: collapse;
     margin-top: 15px;
+    /* table-layout: fixed; /* Можно использовать fixed для более предсказуемого поведения, если width: 100% не работает как auto */
+                          /* Но для "как есть" оставим это на усмотрение браузера, или просто не указываем */
 }
 
 table th, table td {
     border: 1px solid #ddd;
     padding: 8px;
     text-align: left;
+    /* white-space: normal; /* Разрешает перенос текста в первой таблице по умолчанию */
 }
 
 table th {
@@ -57,4 +63,52 @@ table tr:hover {
     background-color: #f8d7da;
     border: 1px solid #f5c6cb;
     border-radius: 4px;
+}
+
+/* --- Специальные стили для таблицы "Долги по сотрудникам" (с классом debtors-table) --- */
+.debtors-table {
+    /* Это ключевое свойство для подгонки ширины колонок по содержимому */
+    table-layout: auto;
+    width: auto; /* Позволяет таблице сжиматься/расширяться по содержимому, а не всегда на 100% */
+    max-width: 100%; /* Но не шире родительского контейнера */
+}
+
+/* Предотвращаем перенос текста в ячейках таблицы должников */
+.debtors-table th,
+.debtors-table td {
+    white-space: nowrap;
+}
+
+/* Пример: если нужно задать минимальную ширину для определенных колонок в таблице должников,
+   чтобы они не были слишком узкими. Подстройте значения по необходимости.
+   Колонки: 1: № п/п, 2: Фамилия должника, 3: Материал, 4: Количество */
+.debtors-table th:nth-child(2),
+.debtors-table td:nth-child(2) {
+    min-width: 120px; /* Минимальная ширина для "Фамилия должника" */
+}
+
+.debtors-table th:nth-child(3),
+.debtors-table td:nth-child(3) {
+    min-width: 150px; /* Минимальная ширина для "Материал" */
+}
+
+/* Для сохранения кнопки экспорта, если вы её используете */
+.export-button {
+    background-color: #28a745;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    margin-bottom: 10px;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.export-button:hover {
+    background-color: #218838;
+}
+
+.table-export-wrapper {
+    margin-bottom: 20px;
 }
