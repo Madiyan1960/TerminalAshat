@@ -3,30 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Учет материалов на складе</title>
-    <link rel="stylesheet" href="style.css">
-    </head>
+    <title>Учет материалов и долгов</title>
+    <link rel="stylesheet" href="style.css"> </head>
 <body>
-    <div class="container">
-        <h1>Учет материалов на складе</h1>
-<div class="controls">
-    <button id="exportExcelButton" >Экспорт в Excel</button>
-</div>
-        <div class="controls">
-            </div>
+    <h1>Учет Материалов и Долгов</h1>
 
-        <div class="data-section">
-            <h2>Движение материалов</h2>
-            <p id="balances-loading" class="loading">Загрузка движения материалов...</p>
-            <div id="balances-table-container"></div>
+    <hr>
+
+    <h2>Движение материалов (Остатки)</h2>
+    <p id="balances-loading" class="loading">Загрузка данных об остатках...</p>
+    <div id="balances-table-container" class="container">
         </div>
 
-        <div class="data-section">
-            <h2>Долги по сотрудникам</h2>
-            <p id="debtors-loading" class="loading">Загрузка долгов...</p>
-            <div id="debtors-table-container"></div>
+    <hr>
+
+    <h2>Долги по сотрудникам</h2>
+    <p id="debtors-loading" class="loading">Загрузка данных о долгах...</p>
+    <div id="debtors-table-container" class="container">
         </div>
-    </div>
 
     <script src="script.js"></script>
 </body>
