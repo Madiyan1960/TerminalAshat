@@ -121,7 +121,7 @@ table tr:hover {
 .debtors-table td[rowspan] {
     vertical-align: middle; /* Выравнивание по центру по вертикали */
     text-align: left;       /* Выравнивание по левому краю по горизонтали */
-    padding-left: 5px;     /* Небольшой отступ слева */
+    padding-left: 3px;     /* Небольшой отступ слева */
 }
 
 /* Если вы используете чередование фона, убедитесь, что это правило применяется: */
@@ -129,7 +129,7 @@ table tr:hover {
 .debtors-table tr.debtor-group-even td[rowspan] {
     vertical-align: middle; /* Выравнивание по центру по вертикали */
     text-align: left;       /* Выравнивание по левому краю по горизонтали */
-    padding-left: 5px;     /* Небольшой отступ слева */
+    padding-left: 3px;     /* Небольшой отступ слева */
 }
 
 /* --- КОНЕЦ СТИЛЕЙ ДЛЯ ВЫРАВНИВАНИЯ --- */
