@@ -15,18 +15,28 @@ h1, h2 {
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     margin-bottom: 20px;
+    /* Optional: Add overflow-x to allow horizontal scrolling if content is too wide */
+    overflow-x: auto;
 }
 
 table {
-    width: 100%;
+    width: 100%; /* Keeps the table within its container */
     border-collapse: collapse;
     margin-top: 15px;
+
+    /* --- КЛЮЧЕВЫЕ ИЗМЕНЕНИЯ ДЛЯ ШИРИНЫ КОЛОНОК --- */
+    table-layout: auto; /* Позволяет ширине колонок зависеть от содержимого */
+    /* Если вы хотите, чтобы колонка не сжималась меньше содержимого */
+    /* min-width: min-content; (Эта строка не является стандартным свойством table,
+                                 но похожий эффект можно достичь через td/th) */
 }
 
 table th, table td {
     border: 1px solid #ddd;
     padding: 8px;
     text-align: left;
+    /* --- КЛЮЧЕВЫЕ ИЗМЕНЕНИЯ ДЛЯ ШИРИНЫ КОЛОНОК --- */
+    white-space: nowrap; /* Предотвращает перенос текста внутри ячейки */
 }
 
 table th {
