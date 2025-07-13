@@ -235,3 +235,27 @@ hr {
         text-overflow: clip;
     }
 }
+/* style.css */
+
+/* (Keep your existing CSS for tables, body, etc.) */
+
+.export-button {
+    background-color: #28a745; /* Green color */
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    margin-bottom: 10px; /* Space between button and table */
+    transition: background-color 0.2s ease-in-out;
+}
+
+.export-button:hover {
+    background-color: #218838; /* Darker green on hover */
+}
+
+/* Optional: style for the wrapper div if needed */
+.table-export-wrapper {
+    margin-bottom: 20px; /* Adds space below each table block */
+}
