@@ -1,6 +1,6 @@
 body {
     font-family: Arial, sans-serif;
-    margin: 1px; /* Отступ от края экрана */
+    margin: 20px;
     background-color: #f4f4f4;
     color: #333;
 }
@@ -15,28 +15,18 @@ h1, h2 {
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     margin-bottom: 20px;
-    /* overflow-x: auto; - Убрано, так как таблицы теперь будут переноситься или обрезаться */
 }
 
-/* Общие стили для ВСЕХ таблиц.
-   Здесь текст будет переноситься, но без ограничения по строкам,
-   по умолчанию для первой таблицы ("Движение материалов"). */
 table {
     width: 100%;
     border-collapse: collapse;
     margin-top: 15px;
-    table-layout: fixed; /* Используем fixed layout, чтобы колонки держали заданную ширину */
 }
 
-table th,
-table td {
+table th, table td {
     border: 1px solid #ddd;
     padding: 8px;
     text-align: left;
-    white-space: normal; /* Разрешаем перенос текста для всех таблиц по умолчанию */
-    word-wrap: break-word; /* Позволяет длинным словам переноситься */
-    overflow: hidden; /* Скрывает содержимое, которое выходит за пределы ячейки */
-    /* text-overflow: ellipsis; - Убрано, так как не требуется для первой таблицы и будет переопределено для второй */
 }
 
 table th {
@@ -67,98 +57,4 @@ table tr:hover {
     background-color: #f8d7da;
     border: 1px solid #f5c6cb;
     border-radius: 4px;
-}
-
-/* --- СПЕЦИАЛЬНЫЕ СТИЛИ ДЛЯ ТАБЛИЦЫ "ДОЛГИ ПО СОТРУДНИКАМ" (с классом debtors-table) --- */
-.debtors-table {
-    table-layout: fixed; /* Также используем fixed layout */
-    width: 100%; /* Занимает всю доступную ширину контейнера */
-}
-
-/* Ширина колонок для таблицы должников.
-   ВАЖНО: Сумма этих ширин должна быть 100%. Настройте их по своему усмотрению. */
-.debtors-table th:nth-child(1),
-.debtors-table td:nth-child(1) { /* № п/п */
-    width: 10%;
-}
-
-.debtors-table th:nth-child(2),
-.debtors-table td:nth-child(2) { /* Фамилия должника */
-    width: 30%;
-}
-
-.debtors-table th:nth-child(3),
-.debtors-table td:nth-child(3) { /* Материал */
-    width: 45%;
-}
-
-.debtors-table th:nth-child(4),
-.debtors-table td:nth-child(4) { /* Количество */
-    width: 15%;
-}
-
-/* --- КЛЮЧЕВЫЕ ИЗМЕНЕНИЯ: Ограничение текста до двух строк без многоточия ТОЛЬКО для таблицы должников --- */
-.debtors-table th,
-.debtors-table td {
-    white-space: normal; /* Разрешаем перенос текста */
-    overflow: hidden; /* Скрывает содержимое, выходящее за пределы */
-    /* text-overflow: ellipsis; - Здесь это свойство УДАЛЕНО для отсутствия многоточий */
-    display: -webkit-box; /* Используем WebKit-специфичный flexbox для обрезки */
-    -webkit-line-clamp: 2; /* **Ограничиваем двумя строками** */
-    -webkit-box-orient: vertical; /* Устанавливаем вертикальную ориентацию бокса */
-}
-
-/* Стили для кнопок экспорта (если вы их используете) */
-.export-button {
-    background-color: #28a745;
-    color: white;
-    padding: 10px 15px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 1rem;
-    margin-bottom: 10px;
-    transition: background-color 0.2s ease-in-out;
-}
-
-.export-button:hover {
-    background-color: #218838;
-}
-
-.table-export-wrapper {
-    margin-bottom: 20px;
-}
-
-/* --- АДАПТИВНЫЕ СТИЛИ ДЛЯ МОБИЛЬНЫХ УСТРОЙСТВ (экраны до 768px) --- */
-@media (max-width: 768px) {
-    /* Уменьшаем отступы для body */
-    body {
-        margin: 5px; /* Вы можете изменить на 1px, если предпочитаете */
-    }
-
-    /* Уменьшаем внутренние отступы контейнеров */
-    .container {
-        padding: 10px;
-    }
-
-    /* Уменьшаем отступы в ячейках обеих таблиц */
-    table th,
-    table td {
-        padding: 5px;
-    }
-
-    /* Оптимизация шрифта для таблицы должников на мобильных */
-    .debtors-table th,
-    .debtors-table td {
-        font-size: 0.8em; /* Немного уменьшаем размер шрифта */
-    }
-
-    /* Для заголовков */
-    h1 {
-        font-size: 1.8em;
-    }
-
-    h2 {
-        font-size: 1.4em;
-    }
 }
