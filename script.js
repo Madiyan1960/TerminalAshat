@@ -114,8 +114,41 @@ async function loadGoogleSheetData(url) {
     }
 }
 
-// --- Функция для отображения данных в таблице (без изменений) ---
-function renderTable(data, containerId, headersMap, uniqueByKey = null, tableClass = null, limit = 'all') {
+// --- НОВАЯ ФУНКЦИЯ: Экспорт таблицы в Excel ---
+function exportTableToExcel(tableId, filename = 'export.xlsx') {
+    const table = document.getElementById(tableId);
+    if (!table) {
+        console.error(`Таблица с ID "${tableId}" не найдена.`);
+        return;
+    }
+
+    // Клонируем таблицу, чтобы не изменять оригинал (например, при удалении кнопки экспорта, если она внутри таблицы)
+    const clonedTable = table.cloneNode(true);
+
+    // Удаляем любые кнопки из клонированной таблицы, если они есть
+    clonedTable.querySelectorAll('button.export-button').forEach(button => button.remove());
+
+    const html = clonedTable.outerHTML;
+
+    // Создаем ссылку для скачивания
+    const a = document.createElement('a');
+    document.body.appendChild(a); // Необходимо добавить ссылку в DOM для Firefox
+
+    // Используем Blob для создания файла
+    // 'application/vnd.ms-excel' для .xls (старый формат), 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' для .xlsx (новый формат)
+    // charset=utf-8 для корректного отображения кириллицы
+    const data_type = 'data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8,';
+    const tableHtml = encodeURIComponent(html);
+
+    a.href = data_type + tableHtml;
+    a.download = filename;
+    a.click();
+
+    document.body.removeChild(a); // Удаляем ссылку из DOM
+}
+
+// --- Функция для отображения данных в таблице (ИЗМЕНЕНО для добавления кнопки экспорта) ---
+function renderTable(data, containerId, headersMap, uniqueByKey = null, tableClass = null, limit = 'all', exportFileName = null) {
     const container = document.getElementById(containerId);
     if (!container) {
         console.error(`Контейнер с ID "${containerId}" не найден.`);
@@ -157,7 +190,24 @@ function renderTable(data, containerId, headersMap, uniqueByKey = null, tableCla
         processedData = processedData.slice(-limit);
     }
 
+    // Создаем обертку для кнопки и таблицы
+    const wrapperDiv = document.createElement('div');
+    wrapperDiv.className = 'table-export-wrapper';
+
+    // Добавляем кнопку экспорта, если указано имя файла
+    if (exportFileName) {
+        const exportButton = document.createElement('button');
+        exportButton.textContent = 'Экспортировать в Excel';
+        exportButton.classList.add('export-button'); // Добавляем класс для стилизации и удаления при клонировании
+        // Важно: ID таблицы будет присвоен ниже, после создания самой таблицы
+        exportButton.onclick = () => exportTableToExcel(`${containerId}-table`, exportFileName);
+        wrapperDiv.appendChild(exportButton);
+    }
+
+
     const table = document.createElement('table');
+    // Присваиваем ID таблице, используя ID контейнера для уникальности
+    table.id = `${containerId}-table`;
     if (tableClass) {
         table.classList.add(tableClass);
     }
@@ -181,8 +231,9 @@ function renderTable(data, containerId, headersMap, uniqueByKey = null, tableCla
         });
     });
 
+    wrapperDiv.appendChild(table); // Добавляем таблицу в обертку
     container.innerHTML = '';
-    container.appendChild(table);
+    container.appendChild(wrapperDiv); // Добавляем обертку в контейнер
 }
 
 // --- Загрузка и отображение данных при загрузке страницы ---
@@ -215,7 +266,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             const loading = document.getElementById('balances-loading');
             if (loading) loading.style.display = 'none';
         } else {
-            renderTable(balancesData, 'balances-table-container', balancesHeaders, null, 'balances-table');
+            // Передаем имя файла для экспорта
+            renderTable(balancesData, 'balances-table-container', balancesHeaders, null, 'balances-table', 'all', 'Остатки_материалов.xlsx');
         }
     } else {
         const container = document.getElementById('balances-table-container');
@@ -282,8 +334,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             { key: 'Количество', label: 'Количество' }
         ];
 
-        // Рендерим "Долги по сотрудникам" с новой структурой
-        renderTable(debtorsSummaryData, 'debtors-table-container', debtorsTableHeaders, null, 'debtors-table', 'all');
+        // Рендерим "Долги по сотрудникам" с новой структурой, передаем имя файла для экспорта
+        renderTable(debtorsSummaryData, 'debtors-table-container', debtorsTableHeaders, null, 'debtors-table', 'all', 'Долги_по_сотрудникам.xlsx');
 
     } else {
         const debtorsContainer = document.getElementById('debtors-table-container');
