@@ -1,0 +1,22 @@
+{
+  "name": "Терминал",
+  "short_name": "Склад",
+  "start_url": "index.html?source=pwa",
+
+  "display": "standalone",
+  "background_color": "#f4f4f4",
+  "theme_color": "#2e7d32",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/Terminal/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/Terminal/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
