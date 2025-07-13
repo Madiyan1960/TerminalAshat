@@ -13,6 +13,7 @@ let debtorsSummaryData = []; // Будет хранить детализиров
 // --- Функция: Парсинг JSON-ответа от Google Sheets (без изменений) ---
 function parseGoogleSheetJSON(jsonText) {
     try {
+        // Извлекаем только JSON-часть из ответа Google Sheets
         const jsonString = jsonText.substring(jsonText.indexOf('{'), jsonText.lastIndexOf('}') + 1);
         const data = JSON.parse(jsonString);
 
@@ -27,12 +28,15 @@ function parseGoogleSheetJSON(jsonText) {
 
                 if (cell) {
                     if (cell.f && typeof cell.f === 'string' && /^\d{2}\.\d{2}\.\d{4}/.test(cell.f)) {
+                        // Обработка строковых дат "ДД.ММ.ГГГГ"
                         value = cell.f;
                     } else if (cell.v !== undefined) {
+                        // Основное значение
                         value = cell.v;
                     }
                 }
 
+                // Обработка дат в формате [year, month, day, ...]
                 if (Array.isArray(value) && value.length >= 3) {
                     const [year, month, day, hour = 0, minute = 0, second = 0] = value;
                     const date = new Date(year, month, day, hour, minute, second);
@@ -45,9 +49,10 @@ function parseGoogleSheetJSON(jsonText) {
                         second: '2-digit'
                     });
                     if (value.endsWith(' 00:00:00')) {
-                        value = value.substring(0, value.length - 9);
+                        value = value.substring(0, value.length - 9); // Удаляем время, если оно 00:00:00
                     }
                 } else if (typeof value === 'string' && value.startsWith('Date(') && value.endsWith(')')) {
+                    // Обработка дат в формате "Date(Y,M,D,H,M,S)"
                     try {
                         const dateParts = value.substring(5, value.length - 1).split(',').map(Number);
                         if (dateParts.length >= 3) {
@@ -71,10 +76,12 @@ function parseGoogleSheetJSON(jsonText) {
                     }
                 }
 
+                // Обработка булевых значений
                 if (typeof value === 'boolean') {
                     value = value ? 'Да' : 'Нет';
                 }
 
+                // Замена undefined/null на пустую строку
                 if (value === undefined || value === null) {
                     value = '';
                 }
@@ -114,7 +121,7 @@ async function loadGoogleSheetData(url) {
     }
 }
 
-// --- НОВАЯ ФУНКЦИЯ: Экспорт таблицы в Excel ---
+// --- НОВАЯ ФУНКЦИЯ: Экспорт таблицы в Excel с использованием SheetJS ---
 function exportTableToExcel(tableId, filename = 'export.xlsx') {
     const table = document.getElementById(tableId);
     if (!table) {
@@ -122,30 +129,21 @@ function exportTableToExcel(tableId, filename = 'export.xlsx') {
         return;
     }
 
-    // Клонируем таблицу, чтобы не изменять оригинал (например, при удалении кнопки экспорта, если она внутри таблицы)
-    const clonedTable = table.cloneNode(true);
+    try {
+        // Создаем книгу Excel из HTML-таблицы
+        // sheet: "Sheet1" - имя листа
+        // raw: true - сохраняет значения как они есть, без преобразования типов Excel
+        const wb = XLSX.utils.table_to_book(table, { sheet: "Sheet1", raw: true });
 
-    // Удаляем любые кнопки из клонированной таблицы, если они есть
-    clonedTable.querySelectorAll('button.export-button').forEach(button => button.remove());
-
-    const html = clonedTable.outerHTML;
-
-    // Создаем ссылку для скачивания
-    const a = document.createElement('a');
-    document.body.appendChild(a); // Необходимо добавить ссылку в DOM для Firefox
-
-    // Используем Blob для создания файла
-    // 'application/vnd.ms-excel' для .xls (старый формат), 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' для .xlsx (новый формат)
-    // charset=utf-8 для корректного отображения кириллицы
-    const data_type = 'data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8,';
-    const tableHtml = encodeURIComponent(html);
-
-    a.href = data_type + tableHtml;
-    a.download = filename;
-    a.click();
-
-    document.body.removeChild(a); // Удаляем ссылку из DOM
+        // Сохраняем книгу как файл .xlsx
+        XLSX.writeFile(wb, filename);
+        console.log(`Таблица "${tableId}" успешно экспортирована в "${filename}"`);
+    } catch (error) {
+        console.error(`Ошибка при экспорте таблицы "${tableId}" в Excel:`, error);
+        alert('Не удалось экспортировать таблицу в Excel. Проверьте консоль для получения подробностей.');
+    }
 }
+
 
 // --- Функция для отображения данных в таблице (ИЗМЕНЕНО для добавления кнопки экспорта) ---
 function renderTable(data, containerId, headersMap, uniqueByKey = null, tableClass = null, limit = 'all', exportFileName = null) {
@@ -167,6 +165,7 @@ function renderTable(data, containerId, headersMap, uniqueByKey = null, tableCla
 
     let processedData = [...data];
 
+    // Логика фильтрации уникальных ключей
     if (uniqueByKey && data.length > 0) {
         const seenKeys = new Set();
         processedData = processedData.filter(row => {
@@ -186,6 +185,7 @@ function renderTable(data, containerId, headersMap, uniqueByKey = null, tableCla
         }
     }
 
+    // Логика ограничения количества строк
     if (limit !== 'all' && typeof limit === 'number' && processedData.length > limit) {
         processedData = processedData.slice(-limit);
     }
@@ -198,13 +198,13 @@ function renderTable(data, containerId, headersMap, uniqueByKey = null, tableCla
     if (exportFileName) {
         const exportButton = document.createElement('button');
         exportButton.textContent = 'Экспортировать в Excel';
-        exportButton.classList.add('export-button'); // Добавляем класс для стилизации и удаления при клонировании
-        // Важно: ID таблицы будет присвоен ниже, после создания самой таблицы
+        exportButton.classList.add('export-button');
+        // ID таблицы будет присвоен ниже, после создания самой таблицы
         exportButton.onclick = () => exportTableToExcel(`${containerId}-table`, exportFileName);
         wrapperDiv.appendChild(exportButton);
     }
 
-
+    // Создаем таблицу
     const table = document.createElement('table');
     // Присваиваем ID таблице, используя ID контейнера для уникальности
     table.id = `${containerId}-table`;
@@ -215,30 +215,34 @@ function renderTable(data, containerId, headersMap, uniqueByKey = null, tableCla
     const tbody = table.createTBody();
     const headerRow = thead.insertRow();
 
+    // Определяем заголовки для отображения
     const displayHeaders = headersMap && headersMap.length > 0 ? headersMap : Object.keys(processedData[0]).map(key => ({ key, label: key }));
 
+    // Заполняем заголовки таблицы
     displayHeaders.forEach(h => {
         const th = document.createElement('th');
         th.textContent = h.label;
         headerRow.appendChild(th);
     });
 
+    // Заполняем строки таблицы
     processedData.forEach(rowData => {
         const row = tbody.insertRow();
         displayHeaders.forEach(h => {
             const cell = row.insertCell();
+            // Обеспечиваем, что null/undefined/пустая строка отображаются как пустая ячейка
             cell.textContent = (rowData[h.key] !== null && rowData[h.key] !== undefined && rowData[h.key] !== '') ? rowData[h.key] : '';
         });
     });
 
     wrapperDiv.appendChild(table); // Добавляем таблицу в обертку
-    container.innerHTML = '';
+    container.innerHTML = ''; // Очищаем контейнер
     container.appendChild(wrapperDiv); // Добавляем обертку в контейнер
 }
 
 // --- Загрузка и отображение данных при загрузке страницы ---
 document.addEventListener('DOMContentLoaded', async () => {
-    // - Загружаем Движение материалов (Остатки) - (без изменений)
+    // - Загружаем Движение материалов (Остатки) -
     const balancesHeaders = [
         { key: 'ID', label: 'ID' },
         { key: 'Материал', label: 'Материал' },
@@ -254,11 +258,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (loadedBalances) {
         let tempBalancesData = loadedBalances;
         const quantityKey = 'Сейчас на складе';
+        // Фильтруем данные: показываем только материалы, где остаток > 0
         tempBalancesData = tempBalancesData.filter(row => {
             const quantity = row[quantityKey];
             return typeof quantity === 'number' && !isNaN(quantity) && quantity > 0;
         });
-        balancesData = tempBalancesData;
+        balancesData = tempBalancesData; // Обновляем глобальную переменную
 
         if (balancesData.length === 0) {
             const container = document.getElementById('balances-table-container');
@@ -266,7 +271,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             const loading = document.getElementById('balances-loading');
             if (loading) loading.style.display = 'none';
         } else {
-            // Передаем имя файла для экспорта
+            // Рендерим таблицу остатков, передаем имя файла для экспорта
             renderTable(balancesData, 'balances-table-container', balancesHeaders, null, 'balances-table', 'all', 'Остатки_материалов.xlsx');
         }
     } else {
@@ -280,13 +285,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     const loadedTransactions = await loadGoogleSheetData(TRANSACTIONS_URL);
 
     if (loadedTransactions) {
+        // Фильтруем только транзакции типа "Должен"
         const debtorsTransactions = loadedTransactions.filter(row => row['Тип'] === 'Должен');
         const summaryMap = new Map();
 
-        // Сначала агрегируем долги, чтобы получить общие суммы по каждому сотруднику и материалу
+        // Агрегируем долги по сотрудникам и материалам
         debtorsTransactions.forEach(transaction => {
             const employee = transaction['Сотрудник'];
             const material = transaction['Материал'];
+            // Преобразуем количество, учитывая возможные запятые в качестве десятичного разделителя
             const quantity = parseFloat(String(transaction['Кол-во']).replace(',', '.'));
 
             if (employee && material && !isNaN(quantity)) {
@@ -298,11 +305,11 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         });
 
-        // Теперь формируем новый массив в требуемом формате
+        // Формируем новый массив для отображения
         let currentDebtorsData = [];
-        let uniqueEmployeeCounter = 0; // Счетчик для уникальных фамилий
+        let uniqueEmployeeCounter = 0;
 
-        // Сортируем сотрудников по фамилии для последовательности
+        // Сортируем сотрудников по фамилии
         const sortedEmployees = Array.from(summaryMap.keys()).sort();
 
         sortedEmployees.forEach(employee => {
