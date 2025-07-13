@@ -40,13 +40,17 @@ table th {
     background-color: #007bff;
     color: white;
     font-weight: bold;
+    
 }
 
 /* Убираем чередующееся подкрашивание строк для таблицы должников, оставляем для других */
 table:not(.debtors-table) tr:nth-child(even) {
     background-color: #f2f2f2;
 }
-
+/* Специально для заголовков таблицы "Долги по сотрудникам" */
+.debtors-table th {
+    text-align: center; /* Центрируем текст по горизонтали */
+}
 table tr:hover {
     background-color: #ddd;
 }
