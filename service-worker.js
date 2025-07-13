@@ -2,11 +2,11 @@ self.addEventListener("install", event => {
   event.waitUntil(
     caches.open("v1").then(cache => {
       return cache.addAll([
-        "/Terminal/index.html",
-        "/Terminal/manifest.json",
-        "/Terminal/service-worker.js",
-        "/Terminal/icons/icon-192x192.png",
-        "/Terminal/icons/icon-512x512.png"
+        "/TerminalAshat/index.html",
+        "/TerminalAshat/manifest.json",
+        "/TerminalAshat/service-worker.js",
+        "/TerminalAshat/icons/icon-192x192.png",
+        "/TerminalAshat/icons/icon-512x512.png"
       ]);
     })
   );
