@@ -101,7 +101,7 @@ table tr:hover {
 
 /* Заливка для четных групп должников */
 .debtors-table tr.debtor-group-even td {
-    background-color: #eef7ff; /* Очень светло-голубой фон */
+    background-color: #9dcbe3; /* Очень светло-голубой фон */
 }
 
 /* Добавляем четкие границы между группами должников */
