@@ -1,75 +1,60 @@
-/* Existing styles for body, h1, h2, .container, .export-button, .table-export-wrapper */
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    background-color: #f4f4f4;
+    color: #333;
+}
 
-/* General table styles (already there) */
+h1, h2 {
+    color: #0056b3;
+}
+
+.container {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+}
+
 table {
     width: 100%;
     border-collapse: collapse;
     margin-top: 15px;
-    table-layout: auto; /* Ensure auto layout for all tables */
 }
 
-/* General cell styles (already there) */
-table th,
-table td {
+table th, table td {
     border: 1px solid #ddd;
     padding: 8px;
     text-align: left;
-    white-space: nowrap; /* Prevent text wrapping, forcing width */
 }
 
-/* --- Specific Adjustments for the Debtor Table --- */
-.debtors-table th,
-.debtors-table td {
-    /* If white-space: nowrap; isn't enough, we can try min-width
-       for certain columns. This is often needed if there's a lot
-       of empty space in other columns that flex to fill. */
-    /* Example: If 'Фамилия должника' is very short, but 'Материал' is long */
+table th {
+    background-color: #007bff;
+    color: white;
+    font-weight: bold;
 }
 
-/* You can target specific columns within the debtors table if needed.
-   For instance, if 'Фамилия должника' or 'Материал' needs more explicit width.
-   This requires knowing the column index or adding specific classes if the content is dynamic.
-   Given your data structure for debtors, the columns are:
-   0: № п/п
-   1: Фамилия должника
-   2: Материал
-   3: Количество
-*/
-
-/* If 'Фамилия должника' is the issue, you could try this: */
-.debtors-table th:nth-child(2),
-.debtors-table td:nth-child(2) {
-    min-width: 120px; /* Example: set a minimum width for the "Фамилия должника" column */
-    /* You might need to adjust this value based on your actual data and font size. */
+table tr:nth-child(even) {
+    background-color: #f2f2f2;
 }
 
-/* If 'Материал' is the issue: */
-.debtors-table th:nth-child(3),
-.debtors-table td:nth-child(3) {
-    min-width: 150px; /* Example: set a minimum width for the "Материал" column */
+table tr:hover {
+    background-color: #ddd;
 }
 
-/* If 'Количество' needs to be tighter: */
-.debtors-table th:nth-child(4),
-.debtors-table td:nth-child(4) {
-    width: 80px; /* Example: try a fixed width or max-content for specific columns */
-    /* This might override content if it's too small */
+.loading {
+    text-align: center;
+    padding: 20px;
+    font-style: italic;
+    color: #666;
 }
 
-/* If the "№ п/п" column is too wide: */
-.debtors-table th:first-child,
-.debtors-table td:first-child {
-    width: 50px; /* Adjust as needed */
+.error-message {
+    color: #dc3545;
+    font-weight: bold;
+    padding: 10px;
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    border-radius: 4px;
 }
-
-/* Rest of your existing CSS below */
-
-/* table th, table td { ... } */
-/* table th { ... } */
-/* table tr:nth-child(even) { ... } */
-/* table tr:hover { ... } */
-/* .loading { ... } */
-/* .error-message { ... } */
-/* .export-button { ... } */
-/* .export-button:hover { ... } */
-/* .table-export-wrapper { ... } */
