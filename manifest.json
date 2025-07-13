@@ -2,7 +2,7 @@
   "name": "Учет Материалов и Долгов",
   "short_name": "Учет",
   "description": "Приложение для учета материалов и долгов",
-  "start_url": "index.html",
+  "start_url": "./",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#007bff",
