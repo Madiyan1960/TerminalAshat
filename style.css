@@ -51,6 +51,11 @@ table:not(.debtors-table) tr:nth-child(even) {
 .debtors-table th {
     text-align: center; /* Центрируем текст по горизонтали */
 }
+/* --- НОВОЕ ПРАВИЛО: Специально для заголовков таблицы "Движение материалов" --- */
+#balances-table-container th {
+    text-align: center; /* Центрируем текст по горизонтали */
+}
+/* --- КОНЕЦ НОВОГО ПРАВИЛА --- */
 table tr:hover {
     background-color: #ddd;
 }
