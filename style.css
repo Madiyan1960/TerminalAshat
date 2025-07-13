@@ -1,9 +1,6 @@
-/* style.css */
-
-/* --- ОБЩИЕ СТИЛИ (НЕ ИЗМЕНЯЮТСЯ В ЭТОМ БЛОКЕ) --- */
 body {
     font-family: Arial, sans-serif;
-    margin: 20px; /* Исходный отступ для больших экранов */
+    margin: 1px; /* Отступ от края экрана */
     background-color: #f4f4f4;
     color: #333;
 }
@@ -14,24 +11,29 @@ h1, h2 {
 
 .container {
     background-color: #fff;
-    padding: 20px; /* Исходный внутренний отступ контейнера */
+    padding: 20px;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     margin-bottom: 20px;
-    overflow-x: auto; /* Разрешает горизонтальную прокрутку, если содержимое слишком широкое */
+    /* Убрали overflow-x: auto, так как текст будет переноситься/обрезаться */
 }
 
-/* Общие стили для таблиц */
+/* Стили для всех таблиц по умолчанию (для таблицы "Движение материалов") */
 table {
-    width: 100%;
+    width: 100%; /* Таблица занимает 100% ширины родительского контейнера */
     border-collapse: collapse;
     margin-top: 15px;
+    table-layout: fixed; /* Используем fixed layout, чтобы колонки держали ширину */
 }
 
 table th, table td {
     border: 1px solid #ddd;
-    padding: 8px; /* Исходный отступ ячеек таблицы */
+    padding: 8px;
     text-align: left;
+    word-wrap: break-word; /* Позволяет длинным словам переноситься */
+    overflow: hidden; /* Скрывает содержимое, которое выходит за пределы ячейки */
+    /* text-overflow: ellipsis; /* Убрали это свойство, чтобы не было многоточия */
+    white-space: normal; /* Разрешаем перенос текста */
 }
 
 table th {
@@ -64,26 +66,42 @@ table tr:hover {
     border-radius: 4px;
 }
 
-/* --- СПЕЦИАЛЬНЫЕ СТИЛИ ДЛЯ ТАБЛИЦЫ ДОЛЖНИКОВ (НЕ ИЗМЕНЯЮТСЯ В ЭТОМ БЛОКЕ) --- */
+/* --- Специальные стили для таблицы "Долги по сотрудникам" (с классом debtors-table) --- */
 .debtors-table {
-    table-layout: auto;
-    width: auto;
-    max-width: 100%;
+    table-layout: fixed;
+    width: 100%; /* Занимает всю доступную ширину контейнера */
 }
 
-.debtors-table th,
-.debtors-table td {
-    white-space: nowrap;
+/* Ширина колонок таблицы должников. Настройте эти проценты по необходимости. */
+.debtors-table th:nth-child(1),
+.debtors-table td:nth-child(1) { /* № п/п */
+    width: 10%;
 }
 
 .debtors-table th:nth-child(2),
-.debtors-table td:nth-child(2) {
-    min-width: 120px;
+.debtors-table td:nth-child(2) { /* Фамилия должника */
+    width: 30%;
 }
 
 .debtors-table th:nth-child(3),
-.debtors-table td:nth-child(3) {
-    min-width: 150px;
+.debtors-table td:nth-child(3) { /* Материал */
+    width: 45%;
+}
+
+.debtors-table th:nth-child(4),
+.debtors-table td:nth-child(4) { /* Количество */
+    width: 15%;
+}
+
+/* --- Ключевые изменения для переноса текста не более чем на две строки (без многоточия) --- */
+.debtors-table th,
+.debtors-table td {
+    white-space: normal; /* Разрешаем перенос текста */
+    overflow: hidden;     /* Скрывает содержимое, выходящее за пределы */
+    /* text-overflow: ellipsis; - ЭТО СВОЙСТВО УБРАНО */
+    display: -webkit-box;
+    -webkit-line-clamp: 2; /* Ограничиваем двумя строками */
+    -webkit-box-orient: vertical;
 }
 
 /* Стили для кнопок экспорта (если используются) */
@@ -107,31 +125,28 @@ table tr:hover {
     margin-bottom: 20px;
 }
 
-
-/* --- АДАПТИВНЫЕ СТИЛИ ДЛЯ МОБИЛЬНЫХ УСТРОЙСТВ --- */
+/* --- Адаптивные стили для мобильных устройств (экраны до 768px) --- */
 @media (max-width: 768px) {
-    /* Уменьшаем отступ от края экрана для body */
+    /* Уменьшаем отступы для body */
     body {
-        margin: 5px; /* Уменьшаем отступ body с 20px до 5px на маленьких экранах */
+        margin: 5px;
     }
 
-    /* Уменьшаем внутренний отступ контейнеров */
+    /* Уменьшаем внутренние отступы контейнеров */
     .container {
-        padding: 10px; /* Уменьшаем внутренний отступ контейнера с 20px до 10px */
+        padding: 10px;
     }
 
     /* Уменьшаем отступы в ячейках обеих таблиц */
     table th,
     table td {
-        padding: 5px; /* Уменьшаем отступы ячеек таблицы с 8px до 5px */
+        padding: 5px;
     }
 
-    /* Дополнительно для таблицы должников, если нужно сделать ее еще компактнее */
+    /* Оптимизация шрифта для таблицы должников на мобильных */
     .debtors-table th,
     .debtors-table td {
-        font-size: 0.8em; /* Немного уменьшаем размер шрифта, если нужно */
-        /* min-width: auto; /* Можете сбросить min-width для некоторых колонок,
-                           чтобы позволить им сжиматься сильнее на телефонах */
+        font-size: 0.8em;
     }
 
     /* Для заголовков */
