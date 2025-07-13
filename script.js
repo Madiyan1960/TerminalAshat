@@ -213,6 +213,37 @@ function renderTable(data, containerId, headersMap, uniqueByKey = null, tableCla
 
 // --- Загрузка и отображение данных при загрузке страницы ---
 document.addEventListener('DOMContentLoaded', async () => {
+    // ... (ваш существующий JavaScript-код выше) ...
+
+// --- ФУНКЦИЯ ДЛЯ ЖИВЫХ ЧАСОВ ---
+function updateClock() {
+    const now = new Date();
+    // Форматируем время в HH:MM:SS
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const seconds = String(now.getSeconds()).padStart(2, '0');
+    // Форматируем дату в DD.MM.YYYY
+    const day = String(now.getDate()).padStart(2, '0');
+    const month = String(now.getMonth() + 1).padStart(2, '0'); // Месяцы от 0 до 11
+    const year = now.getFullYear();
+
+    const timeString = `${hours}:${minutes}:${seconds}`;
+    const dateString = `${day}.${month}.${year}`;
+
+    const clockElement = document.getElementById('live-clock');
+    if (clockElement) {
+        clockElement.textContent = `${dateString} ${timeString}`;
+    }
+}
+
+// Обновляем часы сразу при загрузке
+updateClock();
+// Обновляем часы каждую секунду
+setInterval(updateClock, 1000);
+// --- КОНЕЦ ФУНКЦИИ ДЛЯ ЖИВЫХ ЧАСОВ ---
+    
+    
+    
     // - Загружаем Движение материалов (Остатки) -
     const balancesHeaders = [
         { key: 'ID', label: 'ID' },
