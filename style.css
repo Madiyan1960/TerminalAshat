@@ -9,6 +9,25 @@ h1, h2 {
     color: #0056b3;
     text-align: center; /* Выравнивание по центру */
 }
+/* --- СТИЛИ ДЛЯ ЖИВЫХ ЧАСОВ --- */
+#live-clock {
+    font-size: 1.5em; /* Размер шрифта */
+    font-weight: bold; /* Жирный шрифт */
+    color: #0056b3; /* Цвет текста, как у заголовков */
+    text-align: center; /* Выравнивание по центру */
+    margin-top: 10px; /* Отступ сверху */
+    margin-bottom: 20px; /* Отступ снизу */
+}
+
+/* Адаптивность для мобильных */
+@media (max-width: 768px) {
+    #live-clock {
+        font-size: 1.2em; /* Уменьшаем размер шрифта на мобильных */
+        margin-top: 5px;
+        margin-bottom: 10px;
+    }
+}
+/* --- КОНЕЦ СТИЛЕЙ ДЛЯ ЖИВЫХ ЧАСОВ --- */
 
 .container {
     background-color: #fff;
