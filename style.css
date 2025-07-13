@@ -1,0 +1,237 @@
+/* style.css */
+
+/* ОБЩИЕ СТИЛИ ДЛЯ ВСЕЙ СТРАНИЦЫ */
+body {
+    font-family: Arial, sans-serif;
+    margin: 10px;
+    background-color: #f4f7f6;
+    color: #333;
+    line-height: 1.6;
+}
+
+/* СТИЛИ ДЛЯ ОСНОВНОГО КОНТЕЙНЕРА СОДЕРЖИМОГО */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    background-color: #fff;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* СТИЛИ ДЛЯ ЗАГОЛОВКОВ */
+h1, h2 {
+    color: #2c3e50;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* СТИЛИ ДЛЯ БЛОКА КНОПОК УПРАВЛЕНИЯ (теперь пустой) */
+.controls {
+    /* Эти стили можно удалить, так как нет кнопок: */
+    /* text-align: center; */
+    /* margin-bottom: 15px; */
+}
+
+/* СТИЛИ ДЛЯ РАЗДЕЛОВ ДАННЫХ (каждая таблица в своем разделе) */
+.data-section {
+    margin-bottom: 40px;
+}
+
+/* --- ОБЩИЕ СТИЛИ ДЛЯ ВСЕХ ТАБЛИЦ (базовые границы, отступы) --- */
+table {
+    /* Убрал width: auto; и table-layout: auto; отсюда, чтобы применять их выборочно */
+    border-collapse: collapse;
+    margin-top: 20px;
+    background-color: #fff;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    width: 100%; /* По умолчанию таблицы будут занимать 100% ширины контейнера */
+}
+
+/* СТИЛИ ДЛЯ ЗАГОЛОВКОВ ТАБЛИЦ И ЯЧЕЕК ДАННЫХ */
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px 10px;
+    text-align: left;
+    font-size: 14px;
+    /* Убрал white-space: nowrap; overflow: hidden; text-overflow: ellipsis; отсюда */
+    /* Теперь они будут применяться только к таблице должников, если нужно */
+}
+
+/* СТИЛИ ДЛЯ ЗАГОЛОВКОВ СТОЛБЦОВ ТАБЛИЦЫ */
+th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+    color: #555;
+    text-align: center;
+}
+
+/* СТИЛИ ДЛЯ ЧЕРЕДУЮЩИХСЯ СТРОК ТАБЛИЦЫ (эффект "зебры") */
+tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+/* СТИЛИ ПРИ НАВЕДЕНИИ НА СТРОКУ ТАБЛИЦЫ */
+tr:hover {
+    background-color: #f1f1f1;
+}
+
+/* СТИЛИ ДЛЯ СООБЩЕНИЙ О ЗАГРУЗКЕ */
+.loading {
+    text-align: center;
+    font-style: italic;
+    color: #777;
+    margin-top: 15px;
+}
+
+/* СТИЛИ ДЛЯ СООБЩЕНИЙ ОБ ОШИБКАХ */
+.error-message {
+    color: #cc0000;
+    background-color: #ffe6e6;
+    border: 1px solid #cc0000;
+    padding: 10px;
+    border-radius: 4px;
+    text-align: center;
+    margin: 10px 0;
+}
+
+/* СТИЛИ ДЛЯ ГОРИЗОНТАЛЬНОЙ ЛИНИИ (разделителя) */
+hr {
+    border: 0;
+    height: 1px;
+    background: #eee;
+    margin: -20px 0;
+}
+
+/* --- СПЕЦИФИЧЕСКИЕ СТИЛИ ДЛЯ ТАБЛИЦЫ "ДВИЖЕНИЕ МАТЕРИАЛОВ" --- */
+/* (класс balances-table присваивается в script.js) */
+.balances-table {
+    /* По умолчанию будет 100% ширина, и текст будет переноситься */
+    /* Если вы хотите, чтобы здесь была фиксированная ширина столбцов, 
+       раскомментируйте и настройте секции width */
+    /* table-layout: fixed; */ 
+}
+/* .balances-table th:nth-child(1) { width: 5%; }
+.balances-table th:nth-child(2) { width: 35%; }
+... */
+
+
+/* --- СПЕЦИФИЧЕСКИЕ СТИЛИ ДЛЯ ТАБЛИЦЫ "ДОЛГИ ПО СОТРУДНИКАМ" --- */
+/* (класс debtors-table присваивается в script.js) */
+.debtors-table {
+    width: auto; /* Позволяет таблице сжиматься по содержимому */
+    table-layout: auto; /* КЛЮЧЕВОЕ СВОЙСТВО: автоматическая ширина столбцов */
+}
+
+.debtors-table th, 
+.debtors-table td {
+    white-space: nowrap; /* Важно: предотвращает перенос текста, заставляя столбец расширяться */
+    overflow: hidden; /* Скрывает содержимое, которое выходит за рамки ячейки */
+    text-overflow: ellipsis; /* Добавляет "..." если текст обрезан */
+}
+/* Можно настроить ширину определенных колонок для должников, если white-space: nowrap; создает слишком широкие колонки */
+/* .debtors-table th:nth-child(1) { width: 50px; } */ /* Пример для номера п/п */
+/* .debtors-table th:nth-child(2) { min-width: 150px; } */ /* Пример для фамилии */
+
+
+/* --- АДАПТИВНЫЕ СТИЛИ ДЛЯ МОБИЛЬНЫХ УСТРОЙСТВ --- */
+
+/* Медиазапрос для экранов шириной до 768px */
+@media (max-width: 768px) {
+    .container {
+        padding: 5px;
+    }
+    
+    h1 {
+        font-size: 24px;
+        margin-bottom: 10px;
+    }
+    h2 {
+        font-size: 20px;
+        margin-bottom: 5px;
+    }
+
+    /* Адаптация таблиц для мобильных - ОБЩИЕ ПРАВИЛА */
+    .data-section {
+        overflow-x: auto; /* Позволяет таблице скроллиться по горизонтали */
+        -webkit-overflow-scrolling: touch;
+    }
+
+    table {
+        min-width: 400px; /* Минимальная ширина таблицы, чтобы она не сжималась слишком сильно */
+    }
+
+    /* На мобильных устройствах обычно лучше разрешить перенос текста для всех таблиц */
+    th, td {
+        white-space: normal; /* Разрешаем перенос текста по умолчанию для всех таблиц */
+        word-break: break-word; /* Разрывать длинные слова */
+        overflow: visible; /* Убрать скрытие переполнения */
+        text-overflow: clip; /* Убрать троеточие */
+        padding: 5px;
+    }
+
+    /* НО для таблицы должников, если вы хотите сохранить nowrap на мобильных */
+    .debtors-table th,
+    .debtors-table td {
+        /* white-space: nowrap; */ /* Закомментируйте, если хотите перенос и для должников на мобильных */
+        /* overflow: hidden; */
+        /* text-overflow: ellipsis; */
+    }
+}
+
+/* Медиазапрос для очень маленьких экранов */
+@media (max-width: 480px) {
+    .container {
+        padding: 5px;
+    }
+    h1 {
+        font-size: 20px;
+    }
+    h2 {
+        font-size: 18px;
+    }
+}
+
+/* --- СТИЛИ ДЛЯ ПЕЧАТИ (Print styles) --- */
+@media print {
+    .container {
+        box-shadow: none;
+        padding: 0;
+    }
+    .controls {
+        display: none;
+    }
+    h1 {
+        display: none;
+    }
+    .data-section h2 {
+        text-align: left;
+        margin-top: 10px;
+        margin-bottom: 5px;
+    }
+    table {
+        font-size: 10px;
+        page-break-inside: auto;
+        /* На печати, если нужен table-layout: auto;, убедитесь, что он не конфликтует */
+        table-layout: auto; /* Обычно для печати тоже лучше auto */
+        width: 100%; /* На печати можно вернуть 100% ширины, чтобы использовать всю страницу */
+    }
+    tr {
+        page-break-inside: avoid;
+        page-break-after: auto;
+    }
+    thead {
+        display: table-header-group;
+    }
+    .loading {
+        display: none;
+    }
+
+    /* На печати для всех таблиц можно разрешить перенос текста, чтобы не выходило за границы страницы */
+    th, td {
+        white-space: normal;
+        word-break: break-word;
+        overflow: visible;
+        text-overflow: clip;
+    }
+}
