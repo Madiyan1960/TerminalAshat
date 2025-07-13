@@ -218,10 +218,16 @@ document.addEventListener('DOMContentLoaded', async () => {
 // --- ФУНКЦИЯ ДЛЯ ЖИВЫХ ЧАСОВ ---
 function updateClock() {
     const now = new Date();
+
+    // Массив с названиями дней недели на русском языке
+    const daysOfWeek = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
+    const dayName = daysOfWeek[now.getDay()]; // Получаем название дня недели
+
     // Форматируем время в HH:MM:SS
     const hours = String(now.getHours()).padStart(2, '0');
     const minutes = String(now.getMinutes()).padStart(2, '0');
     const seconds = String(now.getSeconds()).padStart(2, '0');
+
     // Форматируем дату в DD.MM.YYYY
     const day = String(now.getDate()).padStart(2, '0');
     const month = String(now.getMonth() + 1).padStart(2, '0'); // Месяцы от 0 до 11
@@ -232,7 +238,8 @@ function updateClock() {
 
     const clockElement = document.getElementById('live-clock');
     if (clockElement) {
-        clockElement.textContent = `${dateString} ${timeString}`;
+        // Объединяем день недели, дату и время
+        clockElement.textContent = `${dayName}, ${dateString} ${timeString}`;
     }
 }
 
