@@ -116,6 +116,20 @@ table tr:hover {
 }
 
 
+/* --- СТИЛИ ДЛЯ ВЫРАВНИВАНИЯ ОБЪЕДИНЕННЫХ ЯЧЕЕК ПО ЦЕНТРУ --- */
+
+.debtors-table td[rowspan] {
+    vertical-align: middle; /* Выравнивание по центру по вертикали */
+    text-align: center; /* Выравнивание по центру по горизонтали */
+}
+
+/* Если вы используете чередование фона, убедитесь, что это правило применяется: */
+.debtors-table tr.debtor-group-odd td[rowspan],
+.debtors-table tr.debtor-group-even td[rowspan] {
+    vertical-align: middle; /* Выравнивание по центру по вертикали */
+    text-align: center; /* Выравнивание по центру по горизонтали */
+}
+
 /* --- КОНЕЦ СТИЛЕЙ ДЛЯ ВИЗУАЛЬНОГО РАЗДЕЛЕНИЯ --- */
 
 
