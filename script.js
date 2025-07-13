@@ -10,10 +10,9 @@ const TRANSACTIONS_URL = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_I
 let balancesData = [];
 let debtorsSummaryData = []; // Будет хранить детализированные данные по должникам
 
-// --- Функция: Парсинг JSON-ответа от Google Sheets (без изменений) ---
+// --- Функция: Парсинг JSON-ответа от Google Sheets ---
 function parseGoogleSheetJSON(jsonText) {
     try {
-        // Извлекаем только JSON-часть из ответа Google Sheets
         const jsonString = jsonText.substring(jsonText.indexOf('{'), jsonText.lastIndexOf('}') + 1);
         const data = JSON.parse(jsonString);
 
@@ -28,15 +27,12 @@ function parseGoogleSheetJSON(jsonText) {
 
                 if (cell) {
                     if (cell.f && typeof cell.f === 'string' && /^\d{2}\.\d{2}\.\d{4}/.test(cell.f)) {
-                        // Обработка строковых дат "ДД.ММ.ГГГГ"
                         value = cell.f;
                     } else if (cell.v !== undefined) {
-                        // Основное значение
                         value = cell.v;
                     }
                 }
 
-                // Обработка дат в формате [year, month, day, ...]
                 if (Array.isArray(value) && value.length >= 3) {
                     const [year, month, day, hour = 0, minute = 0, second = 0] = value;
                     const date = new Date(year, month, day, hour, minute, second);
@@ -49,10 +45,9 @@ function parseGoogleSheetJSON(jsonText) {
                         second: '2-digit'
                     });
                     if (value.endsWith(' 00:00:00')) {
-                        value = value.substring(0, value.length - 9); // Удаляем время, если оно 00:00:00
+                        value = value.substring(0, value.length - 9);
                     }
                 } else if (typeof value === 'string' && value.startsWith('Date(') && value.endsWith(')')) {
-                    // Обработка дат в формате "Date(Y,M,D,H,M,S)"
                     try {
                         const dateParts = value.substring(5, value.length - 1).split(',').map(Number);
                         if (dateParts.length >= 3) {
@@ -76,12 +71,10 @@ function parseGoogleSheetJSON(jsonText) {
                     }
                 }
 
-                // Обработка булевых значений
                 if (typeof value === 'boolean') {
                     value = value ? 'Да' : 'Нет';
                 }
 
-                // Замена undefined/null на пустую строку
                 if (value === undefined || value === null) {
                     value = '';
                 }
@@ -98,7 +91,7 @@ function parseGoogleSheetJSON(jsonText) {
     }
 }
 
-// --- Функция для загрузки данных (без изменений) ---
+// --- Функция для загрузки данных ---
 async function loadGoogleSheetData(url) {
     if (!url) {
         console.error('URL для загрузки данных не предоставлен.');
@@ -121,32 +114,8 @@ async function loadGoogleSheetData(url) {
     }
 }
 
-// --- НОВАЯ ФУНКЦИЯ: Экспорт таблицы в Excel с использованием SheetJS ---
-function exportTableToExcel(tableId, filename = 'export.xlsx') {
-    const table = document.getElementById(tableId);
-    if (!table) {
-        console.error(`Таблица с ID "${tableId}" не найдена.`);
-        return;
-    }
-
-    try {
-        // Создаем книгу Excel из HTML-таблицы
-        // sheet: "Sheet1" - имя листа
-        // raw: true - сохраняет значения как они есть, без преобразования типов Excel
-        const wb = XLSX.utils.table_to_book(table, { sheet: "Sheet1", raw: true });
-
-        // Сохраняем книгу как файл .xlsx
-        XLSX.writeFile(wb, filename);
-        console.log(`Таблица "${tableId}" успешно экспортирована в "${filename}"`);
-    } catch (error) {
-        console.error(`Ошибка при экспорте таблицы "${tableId}" в Excel:`, error);
-        alert('Не удалось экспортировать таблицу в Excel. Проверьте консоль для получения подробностей.');
-    }
-}
-
-
-// --- Функция для отображения данных в таблице (ИЗМЕНЕНО для добавления кнопки экспорта) ---
-function renderTable(data, containerId, headersMap, uniqueByKey = null, tableClass = null, limit = 'all', exportFileName = null) {
+// --- Функция для отображения данных в таблице (ОБНОВЛЕНА ДЛЯ ROWSPAN) ---
+function renderTable(data, containerId, headersMap, uniqueByKey = null, tableClass = null, limit = 'all') {
     const container = document.getElementById(containerId);
     if (!container) {
         console.error(`Контейнер с ID "${containerId}" не найден.`);
@@ -165,7 +134,6 @@ function renderTable(data, containerId, headersMap, uniqueByKey = null, tableCla
 
     let processedData = [...data];
 
-    // Логика фильтрации уникальных ключей
     if (uniqueByKey && data.length > 0) {
         const seenKeys = new Set();
         processedData = processedData.filter(row => {
@@ -185,29 +153,11 @@ function renderTable(data, containerId, headersMap, uniqueByKey = null, tableCla
         }
     }
 
-    // Логика ограничения количества строк
     if (limit !== 'all' && typeof limit === 'number' && processedData.length > limit) {
         processedData = processedData.slice(-limit);
     }
 
-    // Создаем обертку для кнопки и таблицы
-    const wrapperDiv = document.createElement('div');
-    wrapperDiv.className = 'table-export-wrapper';
-
-    // Добавляем кнопку экспорта, если указано имя файла
-    if (exportFileName) {
-        const exportButton = document.createElement('button');
-        exportButton.textContent = 'Экспортировать в Excel';
-        exportButton.classList.add('export-button');
-        // ID таблицы будет присвоен ниже, после создания самой таблицы
-        exportButton.onclick = () => exportTableToExcel(`${containerId}-table`, exportFileName);
-        wrapperDiv.appendChild(exportButton);
-    }
-
-    // Создаем таблицу
     const table = document.createElement('table');
-    // Присваиваем ID таблице, используя ID контейнера для уникальности
-    table.id = `${containerId}-table`;
     if (tableClass) {
         table.classList.add(tableClass);
     }
@@ -215,29 +165,50 @@ function renderTable(data, containerId, headersMap, uniqueByKey = null, tableCla
     const tbody = table.createTBody();
     const headerRow = thead.insertRow();
 
-    // Определяем заголовки для отображения
     const displayHeaders = headersMap && headersMap.length > 0 ? headersMap : Object.keys(processedData[0]).map(key => ({ key, label: key }));
 
-    // Заполняем заголовки таблицы
     displayHeaders.forEach(h => {
         const th = document.createElement('th');
         th.textContent = h.label;
         headerRow.appendChild(th);
     });
 
-    // Заполняем строки таблицы
+    // --- КЛЮЧЕВОЕ ИЗМЕНЕНИЕ В renderTable: ОБРАБОТКА ROWSPAN ---
     processedData.forEach(rowData => {
         const row = tbody.insertRow();
+        
+        // Добавляем CSS-класс для группы строк (для чередования фона)
+        if (rowData.cssClass) {
+            row.classList.add(rowData.cssClass);
+        }
+
         displayHeaders.forEach(h => {
-            const cell = row.insertCell();
-            // Обеспечиваем, что null/undefined/пустая строка отображаются как пустая ячейка
+            // Если это таблица должников (по классу) и это колонки '№ п/п' или 'Фамилия должника'
+            // И ЭТО НЕ ПЕРВАЯ СТРОКА ГРУППЫ (то есть, rowspan === 0),
+            // то мы ПРОПУСКАЕМ создание новой ячейки, так как она будет объединена с предыдущей.
+            if (tableClass === 'debtors-table' && (h.key === '№ п/п' || h.key === 'Фамилия должника')) {
+                if (rowData.rowspan === 0) {
+                    return; // Пропустить создание ячейки для этой строки
+                }
+            }
+
+            const cell = row.insertCell(); // Создаем ячейку
             cell.textContent = (rowData[h.key] !== null && rowData[h.key] !== undefined && rowData[h.key] !== '') ? rowData[h.key] : '';
+
+            // Если это первая строка группы и колонки '№ п/п' или 'Фамилия должника',
+            // добавляем атрибут rowspan
+            if (tableClass === 'debtors-table' && (h.key === '№ п/п' || h.key === 'Фамилия должника')) {
+                if (rowData.rowspan && rowData.rowspan > 1) { // Убеждаемся, что rowspan > 1
+                    cell.rowSpan = rowData.rowspan;
+                    cell.style.verticalAlign = 'top'; // Выравниваем текст по верхнему краю в объединенной ячейке
+                }
+            }
         });
     });
+    // --- КОНЕЦ КЛЮЧЕВОГО ИЗМЕНЕНИЯ В renderTable ---
 
-    wrapperDiv.appendChild(table); // Добавляем таблицу в обертку
-    container.innerHTML = ''; // Очищаем контейнер
-    container.appendChild(wrapperDiv); // Добавляем обертку в контейнер
+    container.innerHTML = '';
+    container.appendChild(table);
 }
 
 // --- Загрузка и отображение данных при загрузке страницы ---
@@ -258,12 +229,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (loadedBalances) {
         let tempBalancesData = loadedBalances;
         const quantityKey = 'Сейчас на складе';
-        // Фильтруем данные: показываем только материалы, где остаток > 0
         tempBalancesData = tempBalancesData.filter(row => {
             const quantity = row[quantityKey];
             return typeof quantity === 'number' && !isNaN(quantity) && quantity > 0;
         });
-        balancesData = tempBalancesData; // Обновляем глобальную переменную
+        balancesData = tempBalancesData;
 
         if (balancesData.length === 0) {
             const container = document.getElementById('balances-table-container');
@@ -271,8 +241,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             const loading = document.getElementById('balances-loading');
             if (loading) loading.style.display = 'none';
         } else {
-            // Рендерим таблицу остатков, передаем имя файла для экспорта
-            renderTable(balancesData, 'balances-table-container', balancesHeaders, null, 'balances-table', 'all', 'Остатки_материалов.xlsx');
+            renderTable(balancesData, 'balances-table-container', balancesHeaders, null, 'balances-table');
         }
     } else {
         const container = document.getElementById('balances-table-container');
@@ -281,19 +250,17 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (loading) loading.style.display = 'none';
     }
 
-    // --- Загружаем и агрегируем данные для должников ---
+    // --- Загружаем и агрегируем данные для должников (ОБНОВЛЕНО ДЛЯ ROWSPAN) ---
     const loadedTransactions = await loadGoogleSheetData(TRANSACTIONS_URL);
 
     if (loadedTransactions) {
-        // Фильтруем только транзакции типа "Должен"
         const debtorsTransactions = loadedTransactions.filter(row => row['Тип'] === 'Должен');
         const summaryMap = new Map();
 
-        // Агрегируем долги по сотрудникам и материалам
+        // Сначала агрегируем долги, чтобы получить общие суммы по каждому сотруднику и материалу
         debtorsTransactions.forEach(transaction => {
             const employee = transaction['Сотрудник'];
             const material = transaction['Материал'];
-            // Преобразуем количество, учитывая возможные запятые в качестве десятичного разделителя
             const quantity = parseFloat(String(transaction['Кол-во']).replace(',', '.'));
 
             if (employee && material && !isNaN(quantity)) {
@@ -305,29 +272,36 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         });
 
-        // Формируем новый массив для отображения
         let currentDebtorsData = [];
-        let uniqueEmployeeCounter = 0;
+        let uniqueEmployeeCounter = 0; // Счетчик для уникальных фамилий
+        let groupIndex = 0; // Для чередования цветов групп
 
-        // Сортируем сотрудников по фамилии
         const sortedEmployees = Array.from(summaryMap.keys()).sort();
 
         sortedEmployees.forEach(employee => {
-            uniqueEmployeeCounter++; // Увеличиваем счетчик для каждой новой уникальной фамилии
+            uniqueEmployeeCounter++;
+            groupIndex++; // Увеличиваем индекс для каждой новой группы
             const debts = summaryMap.get(employee);
-            // Сортируем материалы для каждого сотрудника
             const sortedMaterials = Object.keys(debts).sort();
 
-            let isFirstMaterialForEmployee = true; // Флаг для первой записи сотрудника
+            const numMaterialsForEmployee = sortedMaterials.length; // <-- КОЛИЧЕСТВО СТРОК ДЛЯ ТЕКУЩЕГО ДОЛЖНИКА
 
-            sortedMaterials.forEach(material => {
-                currentDebtorsData.push({
-                    '№ п/п': isFirstMaterialForEmployee ? uniqueEmployeeCounter : '', // Номер только для первой записи
-                    'Фамилия должника': isFirstMaterialForEmployee ? employee : '', // Фамилия только для первой записи
+            let isFirstMaterialForEmployee = true;
+
+            sortedMaterials.forEach((material, materialIndex) => {
+                const rowData = {
+                    '№ п/п': isFirstMaterialForEmployee ? uniqueEmployeeCounter : '',
+                    'Фамилия должника': isFirstMaterialForEmployee ? employee : '',
                     'Материал': material,
-                    'Количество': debts[material]
-                });
-                isFirstMaterialForEmployee = false; // После первой записи, сбрасываем флаг
+                    'Количество': debts[material],
+                    // --- НОВЫЕ ПОЛЯ ДЛЯ ROWSPAN И КЛАССА ГРУППЫ ---
+                    'rowspan': isFirstMaterialForEmployee ? numMaterialsForEmployee : 0, // 0 означает, что ячейка не создается
+                    'cssClass': (groupIndex % 2 === 0) ? 'debtor-group-even' : 'debtor-group-odd' // Класс для группы
+                    // ---------------------------------------------
+                };
+
+                currentDebtorsData.push(rowData);
+                isFirstMaterialForEmployee = false;
             });
         });
 
@@ -335,14 +309,14 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         // Определяем заголовки для новой структуры таблицы должников
         const debtorsTableHeaders = [
-            { key: '№ п/п', label: '№' },
+            { key: '№ п/п', label: '№ п/п' },
             { key: 'Фамилия должника', label: 'Фамилия должника' },
             { key: 'Материал', label: 'Материал' },
-            { key: 'Количество', label: 'Кол-во' }
+            { key: 'Количество', label: 'Количество' }
         ];
 
-        // Рендерим "Долги по сотрудникам" с новой структурой, передаем имя файла для экспорта
-        renderTable(debtorsSummaryData, 'debtors-table-container', debtorsTableHeaders, null, 'debtors-table', 'all', 'Долги_по_сотрудникам.xlsx');
+        // Рендерим "Долги по сотрудникам" с новой структурой
+        renderTable(debtorsSummaryData, 'debtors-table-container', debtorsTableHeaders, null, 'debtors-table', 'all');
 
     } else {
         const debtorsContainer = document.getElementById('debtors-table-container');
