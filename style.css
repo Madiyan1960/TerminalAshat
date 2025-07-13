@@ -1,6 +1,6 @@
 body {
     font-family: Arial, sans-serif;
-    margin: 20px;
+    margin: 20px; /* Изначальный отступ от края экрана */
     background-color: #f4f4f4;
     color: #333;
 }
@@ -15,10 +15,15 @@ h1, h2 {
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     margin-bottom: 20px;
+    /* --- КЛЮЧЕВОЕ ИЗМЕНЕНИЕ --- */
+    /* Позволяет содержимому контейнера прокручиваться по горизонтали,
+       если оно становится слишком широким для экрана. */
+    overflow-x: auto;
+    /* --- КОНЕЦ ИЗМЕНЕНИЙ --- */
 }
 
 table {
-    width: 100%;
+    width: 100%; /* Таблица занимает 100% ширины родительского контейнера */
     border-collapse: collapse;
     margin-top: 15px;
 }
@@ -27,6 +32,10 @@ table th, table td {
     border: 1px solid #ddd;
     padding: 8px;
     text-align: left;
+    /* Если какой-то текст в ячейках очень длинный и вы не хотите горизонтальной прокрутки,
+       а хотите, чтобы текст переносился, добавьте: */
+    /* white-space: normal; */
+    /* word-wrap: break-word; */
 }
 
 table th {
@@ -57,4 +66,30 @@ table tr:hover {
     background-color: #f8d7da;
     border: 1px solid #f5c6cb;
     border-radius: 4px;
+}
+
+/* --- АДАПТИВНЫЕ СТИЛИ ДЛЯ МОБИЛЬНЫХ УСТРОЙСТВ --- */
+/* Эти стили применяются только тогда, когда ширина экрана меньше или равна 768px (обычно телефоны) */
+@media (max-width: 768px) {
+    body {
+        margin: 5px; /* Уменьшаем отступ от края экрана на телефонах */
+    }
+
+    .container {
+        padding: 10px; /* Уменьшаем внутренние отступы контейнера на телефонах */
+    }
+
+    table th,
+    table td {
+        padding: 5px; /* Уменьшаем отступы в ячейках таблицы на телефонах */
+        font-size: 0.9em; /* Немного уменьшаем размер шрифта в таблицах */
+    }
+
+    h1 {
+        font-size: 1.8em; /* Адаптируем размер заголовков */
+    }
+
+    h2 {
+        font-size: 1.4em;
+    }
 }
